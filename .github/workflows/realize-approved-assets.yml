@@ -1,0 +1,32 @@
+name: Install approved Realize images
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'assets/realize-package/**'
+permissions:
+  contents: write
+jobs:
+  unpack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Rebuild and unpack approved images
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat assets/realize-package/chunk-*.txt | base64 -d > /tmp/realize-approved.zip
+          unzip -t /tmp/realize-approved.zip
+          unzip -oq /tmp/realize-approved.zip -d assets
+          for file in logo_realize_branco_header.png logo_realize_azul_hero.png hero_cozinha_card.png banner_venda_alugue_fundo_limpo.png imovel_locacao_sala_card.png mao_casinha_cinza.png sobre_nos_3_fotos.png lideranca_marcelo_caroline.png nossa_equipe_foto.png logo_realize_branco_footer.png; do
+            test -s "assets/$file"
+          done
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add assets/*.png
+          if ! git diff --cached --quiet; then
+            git commit -m "assets: instala PNGs originais do design Realize aprovado"
+            git push
+          fi
