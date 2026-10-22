@@ -1,0 +1,49 @@
+name: Preparar imagens originais Realize
+on:
+  push:
+    paths:
+      - .github/workflows/realize-prepare-approved.yml
+permissions:
+  contents: write
+jobs:
+  images:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Preparar JPEGs sem gerar novas imagens
+        shell: bash
+        run: |
+          python -m pip install --quiet Pillow
+          python - <<'PY'
+          from PIL import Image
+          from pathlib import Path
+          src=Path('assets')
+          dst=Path('assets_aprovados')
+          dst.mkdir(exist_ok=True)
+          for origin,target in [
+            ('hero_cozinha_card.png','hero-cozinha.jpg'),
+            ('imovel_locacao_sala_card.png','imovel-locacao-sala.jpg'),
+            ('lideranca_marcelo_caroline.png','lideranca-marcelo-caroline.jpg'),
+            ('nossa_equipe_foto.png','equipe-time.jpg')
+          ]:
+            im=Image.open(src/origin).convert('RGB')
+            im.save(dst/target,'JPEG',quality=94,subsampling=0,optimize=True)
+          im=Image.open(src/'sobre_nos_3_fotos.png').convert('RGB')
+          width,height=im.size
+          for i in range(3):
+            left=round(i*width/3)
+            right=round((i+1)*width/3)
+            crop=im.crop((left,0,right,height))
+            crop.save(dst/f'sobre-nos-{i+1}.jpg','JPEG',quality=94,subsampling=0,optimize=True)
+          expected=['logo-realize-topo.png','logo-realize-rodape.png','hero-cozinha.jpg','banner-chaves.png','mao-casinha.png','sobre-nos-1.jpg','sobre-nos-2.jpg','sobre-nos-3.jpg','lideranca-marcelo-caroline.jpg','equipe-time.jpg']
+          assert all((dst/x).is_file() for x in expected),expected
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets_aprovados/
+          if ! git diff --cached --quiet; then
+            git commit -m "assets: converte recortes aprovados em JPEGs utilizados pela LP"
+            git push
+          fi
