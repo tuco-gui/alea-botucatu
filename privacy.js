@@ -35,12 +35,14 @@ document.body.appendChild(box);
 const saved=localStorage.getItem(KEY);box.hidden=!!saved;
 const link=document.createElement('button');link.type='button';link.id='alea-privacy-open';link.textContent='Preferências de cookies';link.setAttribute('aria-label','Alterar preferências de cookies');
 const footer=document.querySelector('footer');if(footer)footer.appendChild(link);else document.body.appendChild(link);
-function save(a,m){const prev=localStorage.getItem(KEY);localStorage.setItem(KEY,JSON.stringify({version:1,analytics:!!a,marketing:!!m,at:new Date().toISOString()}));pref={analytics:!!a,marketing:!!m};box.hidden=true;if(prev)location.reload();else enable();}
+function clearOptionalCookies(){const names=['_ga','_gid','_gat','_fbp','_fbc','_gcl_au'];const host=location.hostname;const domains=['',host,'.'+host,host.replace(/^www\./,''),'.'+host.replace(/^www\./,'')];document.cookie.split(';').forEach(part=>{const n=part.split('=')[0].trim();if(n.startsWith('_ga_')||n.startsWith('_gcl_'))names.push(n);});for(const n of new Set(names))for(const domain of domains)document.cookie=n+'=; Max-Age=0; Path=/; SameSite=Lax'+(domain?'; Domain='+domain:'');}
+function save(a,m){const prev=localStorage.getItem(KEY);if((pref.analytics&&!a)||(pref.marketing&&!m)||(!a&&!m))clearOptionalCookies();localStorage.setItem(KEY,JSON.stringify({version:1,analytics:!!a,marketing:!!m,at:new Date().toISOString()}));pref={analytics:!!a,marketing:!!m};box.hidden=true;if(prev)location.reload();else enable();}
 box.querySelector('#alea-accept').onclick=()=>save(true,true);
 box.querySelector('#alea-reject').onclick=()=>save(false,false);
 box.querySelector('#alea-custom').onclick=()=>{box.querySelector('#alea-choices').hidden=false;box.querySelector('#alea-save').hidden=false;box.querySelector('#alea-ana').checked=pref.analytics;box.querySelector('#alea-mkt').checked=pref.marketing;};
 box.querySelector('#alea-save').onclick=()=>save(box.querySelector('#alea-ana').checked,box.querySelector('#alea-mkt').checked);
 link.onclick=()=>{box.hidden=false;box.querySelector('#alea-custom').click();};
+const privacyLink=document.createElement('a');privacyLink.href='/privacidade.html';privacyLink.textContent='Política de privacidade';privacyLink.style.cssText='margin-left:12px;color:inherit;text-decoration:underline';if(footer)footer.appendChild(privacyLink);else document.body.appendChild(privacyLink);
 if(saved)enable();
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render,{once:true});else render();
