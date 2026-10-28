@@ -5,6 +5,21 @@ const KEY='alea_privacy_v1';
 let pref={analytics:false,marketing:false},initialized=false;
 try{const saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved&&saved.version===1)pref={analytics:!!saved.analytics,marketing:!!saved.marketing};}catch(_){}
 window.dataLayer=window.dataLayer||[];
+// Protecao contra loops de eventos de conversao originados por tags HTML do GTM.
+const aleaGuarded=new Set(['alea_form_success','alea_whatsapp_click','alea_whatsapp_handoff']);
+const aleaEventLast=new Map();
+const aleaNativePush=window.dataLayer.push.bind(window.dataLayer);
+window.dataLayer.push=function(...items){
+ const now=Date.now();
+ const valid=items.filter(item=>{
+  if(!item||typeof item!=='object'||!aleaGuarded.has(item.event))return true;
+  const last=aleaEventLast.get(item.event)||0;
+  if(now-last<3000)return false;
+  aleaEventLast.set(item.event,now);
+  return true;
+ });
+ return valid.length?aleaNativePush(...valid):window.dataLayer.length;
+};
 function add(src){const s=document.createElement('script');s.async=true;s.src=src;document.head.appendChild(s);}
 function enable(){
 if(initialized)return;initialized=true;
