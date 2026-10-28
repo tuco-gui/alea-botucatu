@@ -99,7 +99,7 @@ location.assign('/obrigado.html?p='+encodeURIComponent(body.protocolo));
  const keys=['utm_source','utm_medium','utm_campaign','utm_id','utm_content','utm_term','gclid','fbclid','ttclid'];const qs=new URLSearchParams(location.search);const payload={nome,whatsapp:phone,consentimento:true,website:'',referrer:document.referrer,page:location.pathname};for(const key of keys)payload[key]=qs.get(key)||sessionStorage.getItem('alea-'+key)||'';
  try{const response=await fetch('/api/chat-lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:AbortSignal.timeout(9000)});const result=await response.json();if(!response.ok||!result.ok||!result.protocolo)throw Error('registro');const p=result.protocolo;
 if(window.aleaTrack)window.aleaTrack('alea_whatsapp_handoff',{lead_channel:'chat'});
- const text=['Olá! Quero informações sobre o Alea Botucatu.','Protocolo: '+p,'Não apague esta mensagem. Precisaremos do protocolo para iniciar o atendimento.','Nome: '+nome,'WhatsApp: '+phone].join('\\n');
+ const text=['Olá! Quero informações sobre o Alea Botucatu.','Protocolo: '+p,'Não apague esta mensagem. Precisaremos do protocolo para iniciar o atendimento.','Nome: '+nome,'WhatsApp: '+phone].join('\n');
  const url='https://wa.me/5514997080405?text='+encodeURIComponent(text);
  // O protocolo já foi confirmado na planilha antes do redirecionamento.
  // Limpa a interface antes de deixar o domínio; a mesma aba evita bloqueadores de popup.
