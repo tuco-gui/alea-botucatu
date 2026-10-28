@@ -98,14 +98,15 @@ location.assign('/obrigado.html?p='+encodeURIComponent(body.protocolo));
  finish.addEventListener('click',async()=>{if(busy)return;error.hidden=true;if(!document.getElementById('chat-consent-check').checked){error.textContent='Confirme a autorização para seguir.';error.hidden=false;return}busy=true;finish.disabled=true;finish.textContent='Gerando protocolo...';
  const keys=['utm_source','utm_medium','utm_campaign','utm_id','utm_content','utm_term','gclid','fbclid','ttclid'];const qs=new URLSearchParams(location.search);const payload={nome,whatsapp:phone,consentimento:true,website:'',referrer:document.referrer,page:location.pathname};for(const key of keys)payload[key]=qs.get(key)||sessionStorage.getItem('alea-'+key)||'';
  try{const response=await fetch('/api/chat-lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:AbortSignal.timeout(9000)});const result=await response.json();if(!response.ok||!result.ok||!result.protocolo)throw Error('registro');const p=result.protocolo;
-if(window.aleaTrack)window.aleaTrack('alea_whatsapp_handoff',{lead_channel:'chat'});
+// O evento de handoff sera enviado sem bloquear a navegacao, apos validar o fluxo.
  const text=['Olá! Quero informações sobre o Alea Botucatu.','Protocolo: '+p,'Não apague esta mensagem. Precisaremos do protocolo para iniciar o atendimento.','Nome: '+nome,'WhatsApp: '+phone].join('\n');
  const url='https://wa.me/5514997080405?text='+encodeURIComponent(text);
  // O protocolo já foi confirmado na planilha antes do redirecionamento.
  // Limpa a interface antes de deixar o domínio; a mesma aba evita bloqueadores de popup.
  if(pendingTab&&!pendingTab.closed){try{pendingTab.close()}catch(e){}}
  pendingTab=null;dismiss();
- window.location.assign(url);
+ // Redirecionamento fora do ciclo de callback para permitir que o navegador pinte a tela.
+ setTimeout(()=>{window.location.href=url;},0);
  }catch(ex){if(pendingTab&&!pendingTab.closed)pendingTab.close();pendingTab=null;error.textContent='Não foi possível registrar agora. Tente novamente.';error.hidden=false;finish.disabled=false;finish.textContent='Continuar no WhatsApp';busy=false;}
  });
 })();
