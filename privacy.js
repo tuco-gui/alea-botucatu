@@ -33,6 +33,13 @@ window.fbq('init','1147098132944586');window.fbq('track','PageView');
 }
 }
 window.aleaTrack=function(event,details){
+if(aleaGuarded.has(event)){
+ const now=Date.now();
+ const previous=window.__aleaTrackLast?.[event]||0;
+ if(now-previous<3000)return;
+ window.__aleaTrackLast=window.__aleaTrackLast||{};
+ window.__aleaTrackLast[event]=now;
+}
 if(pref.analytics)window.dataLayer.push(Object.assign({event:event},details||{}));
 if(pref.marketing&&window.fbq){
 if(event==='alea_form_success')window.fbq('track','Lead');
