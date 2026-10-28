@@ -24,6 +24,7 @@ if(event==='alea_form_success')window.fbq('track','Lead');
 if(event==='alea_whatsapp_handoff')window.fbq('track','Contact');
 }
 };
+document.addEventListener('click',function(e){const a=e.target.closest&&e.target.closest('a[href*="wa.me/"],a[href*="api.whatsapp.com/"]');if(a)window.aleaTrack('alea_whatsapp_click',{lead_channel:'whatsapp_link'});},true);
 const style=document.createElement('style');
 style.textContent='#alea-cookie-box{position:fixed;z-index:2147483000;bottom:18px;left:18px;right:18px;max-width:750px;margin:auto;background:#fff;color:#143f3c;border:1px solid #d8e2dd;border-radius:14px;box-shadow:0 14px 55px #001c1944;padding:20px;font:14px/1.55 system-ui,sans-serif}#alea-cookie-box[hidden]{display:none}#alea-cookie-box strong{font-size:17px;display:block;margin-bottom:7px}#alea-cookie-box p{margin:8px 0 14px}#alea-cookie-box a{color:#075b55;text-decoration:underline}#alea-cookie-box .actions{display:flex;gap:8px;flex-wrap:wrap}#alea-cookie-box button,.alea-privacy-control{border:1px solid #075b55;border-radius:7px;padding:10px 14px;background:#075b55;color:#fff;font-weight:700;cursor:pointer}#alea-cookie-box button.secondary{background:white;color:#075b55}#alea-cookie-box label{display:block;margin:9px 0}#alea-cookie-box input{margin-right:8px}#alea-privacy-open{background:transparent;border:0;color:inherit;text-decoration:underline;cursor:pointer;padding:6px;font:inherit}';
 function render(){
