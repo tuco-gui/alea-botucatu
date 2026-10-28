@@ -10,6 +10,7 @@ if(sessionStorage.getItem('alea-conversion-'+p)==='1') {sessionStorage.removeIte
 const msg=['Olá, quero fazer meu pré-cadastro do Alea Botucatu.','','Protocolo: '+p,'Não apague esta mensagem, pois precisaremos do protocolo para iniciar o atendimento.','','Nome: '+rec.nome,'WhatsApp: '+rec.whatsapp,'E-mail: '+rec.email,'Renda familiar: '+(rec.renda||'Não informada')].join('\n');
 const url='https://wa.me/5514997080405?text='+encodeURIComponent(msg);
 document.querySelector('#wa').href=url;
-setTimeout(()=>{window.open(url,'_blank','noopener,noreferrer')},350);
+document.querySelector('#wa').addEventListener('click',()=>{if(window.aleaTrack)window.aleaTrack('alea_whatsapp_handoff',{lead_channel:'form_thankyou'});},{once:true});
+// O WhatsApp só é aberto pelo clique explícito do visitante.
 }
 </script></body></html>
