@@ -11,7 +11,7 @@ const aleaGuarded=new Set(['alea_form_success','alea_whatsapp_click','alea_whats
 function add(src){const s=document.createElement('script');s.async=true;s.src=src;document.head.appendChild(s);}
 function enable(){
 if(initialized)return;initialized=true;
-if(pref.analytics){window.dataLayer.push({'gtm.start':Date.now(),event:'gtm.js'});add('https://www.googletagmanager.com/gtm.js?id=GTM-MJZS5VPC');}
+if(pref.analytics){window.gtag=window.gtag||function(){window.dataLayer.push(arguments);};window.dataLayer.push({'gtm.start':Date.now(),event:'gtm.js'});add('https://www.googletagmanager.com/gtm.js?id=GTM-MJZS5VPC');}
 if(pref.marketing){
 window.gtag=window.gtag||function(){window.dataLayer.push(arguments);};
 window.gtag('js',new Date());window.gtag('config','AW-18538989712');
@@ -30,7 +30,7 @@ window.aleaTrack=function(event,details){
    window.__aleaTrackLast[event]=now;
   }
   // GTM: somente dados; nao bloquear a interface nem navegar por este callback.
-  if(pref.analytics)window.dataLayer.push(Object.assign({event:event},details||{}));
+  if(pref.analytics&&typeof window.gtag==='function'){window.gtag('event',event,Object.assign({send_to:'G-EWH4MRG46J',transport_type:'beacon'},details||{}));}
   if(pref.marketing&&window.fbq){
    if(event==='alea_form_success')window.fbq('track','Lead');
    if(event==='alea_whatsapp_handoff')window.fbq('track','Contact');
