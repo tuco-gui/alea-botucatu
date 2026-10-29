@@ -23,7 +23,7 @@ window.dataLayer.push=function(...items){
 function add(src){const s=document.createElement('script');s.async=true;s.src=src;document.head.appendChild(s);}
 function enable(){
 if(initialized)return;initialized=true;
-if(pref.analytics){window.dataLayer.push({'gtm.start':Date.now(),event:'gtm.js'});add('https://www.googletagmanager.com/gtm.js?id=GTM-MJZS5VPC');}
+if(pref.analytics){window.dataLayer.push({'gtm.start':Date.now(),event:'gtm.js'});add('https://www.googletagmanager.com/gtm.js?id=GTM-MJZS5VPC');window.gtag=window.gtag||function(){window.dataLayer.push(arguments);};window.gtag('js',new Date());window.gtag('config','G-EWH4MRG46J',{send_page_view:false});add('https://www.googletagmanager.com/gtag/js?id=G-EWH4MRG46J');}
 if(pref.marketing){
 window.gtag=window.gtag||function(){window.dataLayer.push(arguments);};
 window.gtag('js',new Date());window.gtag('config','AW-18538989712');
@@ -40,7 +40,7 @@ if(aleaGuarded.has(event)){
  window.__aleaTrackLast=window.__aleaTrackLast||{};
  window.__aleaTrackLast[event]=now;
 }
-if(pref.analytics)window.dataLayer.push(Object.assign({event:event},details||{}));
+if(pref.analytics){if(['alea_form_success','alea_whatsapp_click','alea_whatsapp_handoff'].includes(event)){if(window.gtag)window.gtag('event',event,Object.assign({send_to:'G-EWH4MRG46J',transport_type:'beacon'},details||{}));}else window.dataLayer.push(Object.assign({event:event},details||{}));}
 if(pref.marketing&&window.fbq){
 if(event==='alea_form_success')window.fbq('track','Lead');
 if(event==='alea_whatsapp_handoff')window.fbq('track','Contact');
