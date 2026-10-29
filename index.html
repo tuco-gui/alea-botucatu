@@ -65,6 +65,7 @@ try{const response=await fetch('/api/lead',{method:'POST',headers:{'Content-Type
 sessionStorage.setItem('alea-form-'+body.protocolo,JSON.stringify({nome:data.nome,whatsapp:data.whatsapp,email:data.email,renda:data.renda}));
 sessionStorage.setItem('alea-conversion-'+body.protocolo,'1');
 if(window.aleaTrack)window.aleaTrack('alea_form_success',{lead_channel:'form'});
+await new Promise(resolve=>setTimeout(resolve,650));
 location.assign('/obrigado.html?p='+encodeURIComponent(body.protocolo));
 }catch(err){notice.textContent='Não foi possível registrar o pré-cadastro agora. Tente novamente ou use o botão de WhatsApp ao lado.';notice.hidden=false;btn.disabled=false;btn.textContent='Quero receber informações';}
 });
@@ -107,7 +108,7 @@ if(window.aleaTrack)window.aleaTrack('alea_whatsapp_handoff',{lead_channel:'chat
  if(pendingTab&&!pendingTab.closed){try{pendingTab.close()}catch(e){}}
  pendingTab=null;dismiss();
  // Redirecionamento fora do ciclo de callback para permitir que o navegador pinte a tela.
- setTimeout(()=>{window.location.href=url;},0);
+ setTimeout(()=>{window.location.href=url;},650);
  }catch(ex){if(pendingTab&&!pendingTab.closed)pendingTab.close();pendingTab=null;error.textContent='Não foi possível registrar agora. Tente novamente.';error.hidden=false;finish.disabled=false;finish.textContent='Continuar no WhatsApp';busy=false;}
  });
 })();
