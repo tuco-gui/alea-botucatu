@@ -30,7 +30,7 @@ window.aleaTrack=function(event,details){
    window.__aleaTrackLast[event]=now;
   }
   // GTM: somente dados; nao bloquear a interface nem navegar por este callback.
-  if(pref.analytics&&typeof window.gtag==='function'){window.gtag('event',event,Object.assign({send_to:'G-EWH4MRG46J',transport_type:'beacon'},details||{}));}
+  if(pref.analytics){const internal={alea_form_success:'alea_dl_form_confirmed',alea_whatsapp_handoff:'alea_dl_whatsapp_confirmed',alea_whatsapp_click:'alea_dl_whatsapp_link_click'}[event];if(internal)window.dataLayer.push(Object.assign({event:internal},details||{}));}
   if(pref.marketing&&window.fbq){
    if(event==='alea_form_success')window.fbq('track','Lead');
    if(event==='alea_whatsapp_handoff')window.fbq('track','Contact');
