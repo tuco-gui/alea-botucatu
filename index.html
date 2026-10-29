@@ -64,7 +64,7 @@ const data={nome:form.nome.value.trim(),whatsapp:form.whatsapp.value.trim(),emai
 try{const response=await fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data),signal:AbortSignal.timeout(15000)});const body=await response.json();if(!response.ok||!body.ok||!body.protocolo)throw Error('Falha no registro. Tente novamente.');
 sessionStorage.setItem('alea-form-'+body.protocolo,JSON.stringify({nome:data.nome,whatsapp:data.whatsapp,email:data.email,renda:data.renda}));
 sessionStorage.setItem('alea-conversion-'+body.protocolo,'1');
-// Conversao aguardando mensuracao segura, sem bloquear o cadastro.
+try{window.aleaTrack?.('alea_form_success',{lead_channel:'form'});}catch(_){}
 location.assign('/obrigado.html?p='+encodeURIComponent(body.protocolo));
 }catch(err){notice.textContent='Não foi possível registrar o pré-cadastro agora. Tente novamente ou use o botão de WhatsApp ao lado.';notice.hidden=false;btn.disabled=false;btn.textContent='Quero receber informações';}
 });
@@ -99,7 +99,7 @@ location.assign('/obrigado.html?p='+encodeURIComponent(body.protocolo));
  finish.addEventListener('click',async()=>{if(busy)return;error.hidden=true;if(!document.getElementById('chat-consent-check').checked){error.textContent='Confirme a autorização para seguir.';error.hidden=false;return}busy=true;finish.disabled=true;finish.textContent='Gerando protocolo...';
  const keys=['utm_source','utm_medium','utm_campaign','utm_id','utm_content','utm_term','gclid','fbclid','ttclid'];const qs=new URLSearchParams(location.search);const payload={nome,whatsapp:phone,consentimento:true,website:'',referrer:document.referrer,page:location.pathname};for(const key of keys)payload[key]=qs.get(key)||sessionStorage.getItem('alea-'+key)||'';
  try{const response=await fetch('/api/chat-lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:AbortSignal.timeout(15000)});const result=await response.json();if(!response.ok||!result.ok||!result.protocolo)throw Error('registro');const p=result.protocolo;
-// Nao executa scripts de rastreamento na finalizacao do chat.
+try{window.aleaTrack?.('alea_whatsapp_handoff',{lead_channel:'chat'});}catch(_){}
  const text=['Olá! Quero informações sobre o Alea Botucatu.','Protocolo: '+p,'Não apague esta mensagem. Precisaremos do protocolo para iniciar o atendimento.','Nome: '+nome,'WhatsApp: '+phone].join('\n');
  const url='https://wa.me/5514997080405?text='+encodeURIComponent(text);
  // O protocolo já foi confirmado na planilha antes do redirecionamento.
