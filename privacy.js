@@ -40,7 +40,7 @@ if(aleaGuarded.has(event)){
  window.__aleaTrackLast=window.__aleaTrackLast||{};
  window.__aleaTrackLast[event]=now;
 }
-if(pref.analytics){if(['alea_form_success','alea_whatsapp_click','alea_whatsapp_handoff'].includes(event)){if(window.gtag)window.gtag('event',event,Object.assign({send_to:'G-EWH4MRG46J',transport_type:'beacon'},details||{}));}else window.dataLayer.push(Object.assign({event:event},details||{}));}
+if(pref.analytics)window.dataLayer.push(Object.assign({event:event},details||{}));
 if(pref.marketing&&window.fbq){
 if(event==='alea_form_success')window.fbq('track','Lead');
 if(event==='alea_whatsapp_handoff')window.fbq('track','Contact');
