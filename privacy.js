@@ -5,25 +5,13 @@ const KEY='alea_privacy_v1';
 let pref={analytics:false,marketing:false},initialized=false;
 try{const saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved&&saved.version===1)pref={analytics:!!saved.analytics,marketing:!!saved.marketing};}catch(_){}
 window.dataLayer=window.dataLayer||[];
-// Protecao contra loops de eventos de conversao originados por tags HTML do GTM.
+// Eventos de conversao sao tratados exclusivamente pela instrumentacao validada.
+// Nao sobrescrever dataLayer.push: o GTM precisa controlar sua fila nativamente.
 const aleaGuarded=new Set(['alea_form_success','alea_whatsapp_click','alea_whatsapp_handoff']);
-const aleaEventLast=new Map();
-const aleaNativePush=window.dataLayer.push.bind(window.dataLayer);
-window.dataLayer.push=function(...items){
- const now=Date.now();
- const valid=items.filter(item=>{
-  if(!item||typeof item!=='object'||!aleaGuarded.has(item.event))return true;
-  const last=aleaEventLast.get(item.event)||0;
-  if(now-last<3000)return false;
-  aleaEventLast.set(item.event,now);
-  return true;
- });
- return valid.length?aleaNativePush(...valid):window.dataLayer.length;
-};
 function add(src){const s=document.createElement('script');s.async=true;s.src=src;document.head.appendChild(s);}
 function enable(){
 if(initialized)return;initialized=true;
-if(pref.analytics){window.dataLayer.push({'gtm.start':Date.now(),event:'gtm.js'});add('https://www.googletagmanager.com/gtm.js?id=GTM-MJZS5VPC');window.gtag=window.gtag||function(){window.dataLayer.push(arguments);};window.gtag('js',new Date());window.gtag('config','G-EWH4MRG46J',{send_page_view:false});add('https://www.googletagmanager.com/gtag/js?id=G-EWH4MRG46J');}
+if(pref.analytics){window.dataLayer.push({'gtm.start':Date.now(),event:'gtm.js'});add('https://www.googletagmanager.com/gtm.js?id=GTM-MJZS5VPC');}
 if(pref.marketing){
 window.gtag=window.gtag||function(){window.dataLayer.push(arguments);};
 window.gtag('js',new Date());window.gtag('config','AW-18538989712');
@@ -33,18 +21,21 @@ window.fbq('init','1147098132944586');window.fbq('track','PageView');
 }
 }
 window.aleaTrack=function(event,details){
-if(aleaGuarded.has(event)){
- const now=Date.now();
- const previous=window.__aleaTrackLast?.[event]||0;
- if(now-previous<3000)return;
- window.__aleaTrackLast=window.__aleaTrackLast||{};
- window.__aleaTrackLast[event]=now;
-}
-if(pref.analytics)window.dataLayer.push(Object.assign({event:event},details||{}));
-if(pref.marketing&&window.fbq){
-if(event==='alea_form_success')window.fbq('track','Lead');
-if(event==='alea_whatsapp_handoff')window.fbq('track','Contact');
-}
+ try{
+  if(aleaGuarded.has(event)){
+   const now=Date.now();
+   const prev=window.__aleaTrackLast?.[event]||0;
+   if(now-prev<3000)return;
+   window.__aleaTrackLast=window.__aleaTrackLast||{};
+   window.__aleaTrackLast[event]=now;
+  }
+  // GTM: somente dados; nao bloquear a interface nem navegar por este callback.
+  if(pref.analytics)window.dataLayer.push(Object.assign({event:event},details||{}));
+  if(pref.marketing&&window.fbq){
+   if(event==='alea_form_success')window.fbq('track','Lead');
+   if(event==='alea_whatsapp_handoff')window.fbq('track','Contact');
+  }
+ }catch(e){console.warn('Rastreamento indisponivel; cadastro preservado.');}
 };
 document.addEventListener('click',function(e){const a=e.target.closest&&e.target.closest('a[href*="wa.me/"],a[href*="api.whatsapp.com/"]');if(a)window.aleaTrack('alea_whatsapp_click',{lead_channel:'whatsapp_link'});},true);
 const style=document.createElement('style');
