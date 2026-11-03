@@ -8,7 +8,7 @@ module.exports = async function handler(req,res){
   const v=req.body||{}; const txt=(key,max=140)=>String(v[key]??'').trim().slice(0,max);
   const nome=txt('nome',120),telefone=txt('whatsapp',24).replace(/\D/g,''),email=txt('email',160);
   if(txt('website')) return res.status(400).json({ok:false,error:'invalido'});
-  if(nome.length<3||!/^[0-9]{10,13}$/.test(telefone)||!/^\S+@\S+\.\S+$/.test(email)||v.consentimento!==true) return res.status(400).json({ok:false,error:'dados_invalidos'});
+  if(nome.length<3||!/^[1-9][0-9][2-9][0-9]{7,8}$/.test(telefone)||!/^\S+@\S+\.\S+$/.test(email)||!['Até R$ 3.000','R$ 3.001 a R$ 5.000','R$ 5.001 a R$ 8.000','Acima de R$ 8.000','Prefiro conversar com a equipe'].includes(txt('renda',100))||v.consentimento!==true) return res.status(400).json({ok:false,error:'dados_invalidos'});
   const url=process.env.ALEA_LEADS_WEBHOOK_URL;
   if(!url)return res.status(503).json({ok:false,error:'servico_indisponivel'});
   const fields=['renda','utm_source','utm_medium','utm_campaign','utm_id','utm_content','utm_term','gclid','fbclid','ttclid','referrer','page','website'];
