@@ -1,0 +1,7 @@
+# ONE Terramaris — Realize
+
+Nova landing page em /one-terramaris/ com noindex; não alterar domínio nem a página Alea original. Design próprio inspirado nas referências Landdding/Tabbied, sem copiar templates ou usar serviços pagos. Dados do empreendimento confirmados no site oficial e book; 170 m² é área média do lote. Imagens de origem oficial, disponíveis também no Drive 04-One Terramares; hotlink temporário para a revisão, migrar para cópias locais autorizadas antes do lançamento. Logo e foto da equipe reaproveitados do site Realize existente. A rota /realize.html permanece a mesma.
+
+Formulário principal e chat coletam os mesmos campos da Alea; registro confirmado com protocolo antes do botão explícito de WhatsApp da Realize (5514997080405). API /api/one-lead exige variável ONE_LEADS_WEBHOOK_URL exclusiva e falha fechada sem configuração. Não usar o webhook Alea: o fluxo e a planilha são específicos daquele empreendimento. Criar/configurar fluxo e destino ONE, preservar UTMs, validar consentimento e protocolo com teste controlado antes de disponibilizar contato. Sem trackers de marketing ativos por padrão. Nenhum domínio novo nem campanha autorizados por este commit.
+
+Antes de publicação: verificar direitos de uso, copiar mídia para hospedagem própria, confirmar política de privacidade, ligar endpoint, testar mobile e desktop e registrar lead fictício isolado; remover noindex apenas após aprovação e definir canonical/sitemap quando o domínio final for informado.
